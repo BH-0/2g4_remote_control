@@ -1,10 +1,10 @@
 #include "key.h"
 
-
 // 按键按下计时
 // -------------------------
 u8 WKUP_Cnt = 0;	
 u8 KEY1_Cnt = 0;
+u8 KEY2_Cnt = 0;
 u8 KEY_UP_Cnt = 0;
 u8 KEY_DOWN_Cnt = 0;
 u8 KEY_LEFT_Cnt = 0;
@@ -19,7 +19,7 @@ u8 KEY_Rocker2_Cnt = 0;
 
 // 12个按键的状态：按下为1，松开为0
 //-------------------------------
-u8 F_KEY_Down[12] = { 0 };
+volatile u8 F_KEY_Down[13] = { 0 };
 //-------------------------------
 
 
@@ -56,8 +56,8 @@ void KEY_Init_JX(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);					// 根据设定参数初始化
 	
 	
-	// 按键：KEY_1--PC14、KEY_RightRocker--PC15
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14|GPIO_Pin_15;
+	// 按键：KEY_1--PC14、KEY_2--PC13、KEY_RightRocker--PC15
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 			// 上拉输入
 	GPIO_Init(GPIOC, &GPIO_InitStructure);					// 根据设定参数初始化
 	
@@ -89,6 +89,17 @@ void RF2G4_KEY_Scan_JX(void)
 	{	KEY1_Cnt ++ ;
 		if( KEY1_Cnt>10 )
 		{ F_KEY_Down[KEY1] = 1; }
+	}
+	//------------------------------------
+
+	// KEY2
+	//------------------------------------
+	if(KEY2_in)
+	{ KEY2_Cnt = 0; F_KEY_Down[KEY2] = 0;}
+	else
+	{	KEY2_Cnt ++ ;
+		if( KEY2_Cnt>10 )
+		{ F_KEY_Down[KEY2] = 1; }
 	}
 	//------------------------------------
 	

@@ -53,7 +53,7 @@ int main(void)
 	
 	u8 J_2G4_Data_Send = 0;		// 标志位：判断是否需发射数据
 	
-	u8 F_No_motion = 0 ;		// 标志位：当前无动作
+	volatile u8 F_No_motion = 0 ;		// 标志位：当前无动作
 	//------------------------------------------------------------
 	
 	
@@ -112,15 +112,15 @@ int main(void)
 			
 			// 准备射频数据
 			//-------------------------------------------------------
-			for(L_CNT=0;L_CNT<12;L_CNT++)
+			for(L_CNT=0;L_CNT<10;L_CNT++)
 			{
-				RF2G4_Send_Data[L_CNT] = F_KEY_Down[L_CNT]; //放入按键值
+				RF2G4_Send_Data[L_CNT] = F_KEY_Down[L_CNT]; //放入按键值，只发送前10个按键，剩下三个留作本地操作
 			}
 			
-			RF2G4_Send_Data[12] = (u8)(AV_ADC_Channel1_Sample / 16);    //放入摇杆值
-			
-			RF2G4_Send_Data[13] = (u8)(AV_ADC_Channel3_Sample / 16);    //放入摇杆值
-			
+			RF2G4_Send_Data[10] = (u8)(AV_ADC_Channel1_Sample / 16);    //放入摇杆值
+			RF2G4_Send_Data[11] = (u8)(AV_ADC_Channel2_Sample / 16);    //放入摇杆值
+			RF2G4_Send_Data[12] = (u8)(AV_ADC_Channel3_Sample / 16);    //放入摇杆值
+			RF2G4_Send_Data[13] = (u8)(AV_ADC_Channel6_Sample / 16);    //放入摇杆值
 		}
 		//------------------------------------------------------------------
 		
@@ -134,12 +134,17 @@ int main(void)
 			
 			// 判断按键/摇杆的位置（无按键/中间档位，不发射，降低功耗）
 			//-----------------------------------------------------
-			for(L_CNT=0; L_CNT<12; L_CNT++)
+			for(L_CNT=0; L_CNT<10; L_CNT++)
 			{
 				J_2G4_Data_Send += RF2G4_Send_Data[L_CNT];
 			}
 			
-			if( J_2G4_Data_Send == 0 && RF2G4_Send_Data[12]>118 && RF2G4_Send_Data[12]<145  && RF2G4_Send_Data[13]>118 && RF2G4_Send_Data[13]<145 ) //判断到无动作
+			if( J_2G4_Data_Send == 0 &&
+			 	RF2G4_Send_Data[10]>118 && RF2G4_Send_Data[10]<145 && 
+			 	RF2G4_Send_Data[11]>118 && RF2G4_Send_Data[11]<145 &&
+				RF2G4_Send_Data[12]>118 && RF2G4_Send_Data[12]<145 && 
+			 	RF2G4_Send_Data[13]>118 && RF2G4_Send_Data[13]<145
+			 ) //判断到无动作
 			{
 				if( F_No_motion == 0 )
 				{

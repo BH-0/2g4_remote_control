@@ -8,7 +8,7 @@
 
 // 12个按键的状态：按下为1，松开为0
 //-------------------------------
-extern u8 F_KEY_Down[12];
+extern volatile u8 F_KEY_Down[13];
 //-------------------------------
 
 
@@ -16,6 +16,7 @@ extern u8 F_KEY_Down[12];
 //------------------------------------------------------------------------
 #define 	WKUP_in					PA_in(0)	// WKUP--PA0
 #define 	KEY1_in					PC_in(14)	// KEY_1--PC14
+#define 	KEY2_in					PC_in(13)	// KEY_2--PC13
 
 #define 	KEY_UP_in				PA_in(11)	// KEY_UP--PA11
 #define 	KEY_DOWN_in				PA_in(12)	// KEY_DOWN--PA12
@@ -34,20 +35,22 @@ extern u8 F_KEY_Down[12];
 
 // 按键序号
 //--------------------------------------------------------------
-#define 	WKUP				0				// 唤醒键
-#define 	KEY1				1				// 按键1
-#define 	KEY_UP				2				// 上
-#define 	KEY_DOWN			3				// 下
-#define 	KEY_LEFT			4				// 左
-#define 	KEY_RIGHT			5				// 右
-#define 	KEY_A				6				// A
-#define 	KEY_AA				7				// A+
-#define 	KEY_B				8				// B
-#define 	KEY_BB				9				// B+
 
-#define 	KEY_Rocker1			10				// 摇杆1的按键
-#define 	KEY_Rocker2			11				// 摇杆2的按键
+#define 	KEY_UP				0				// 上
+#define 	KEY_DOWN			1				// 下
+#define 	KEY_LEFT			2				// 左
+#define 	KEY_RIGHT			3				// 右
+#define 	KEY_A				4				// A
+#define 	KEY_AA				5				// A+
+#define 	KEY_B				6				// B
+#define 	KEY_BB				7				// B+
 
+#define 	KEY_Rocker1			8				// 摇杆1的按键
+#define 	KEY_Rocker2			9				// 摇杆2的按键
+
+#define 	WKUP				10				// 唤醒键
+#define 	KEY1				11				// 按键1
+#define 	KEY2				12				// 按键1
 
 // 按键初始化
 //----------------------------
