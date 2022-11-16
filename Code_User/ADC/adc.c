@@ -6,10 +6,14 @@ u16 ADC1_Value[C_Channel_Sample][C_ADC_Channel] = { 0 };	// DMA搬运数据存放处
 u8  C_ADC_Sample = 0 ;				// ADC采样次数
 	
 u32 AM_ADC_Channel1_Sample = 0 ;	// ADC通道1采样总计
+u32 AM_ADC_Channel2_Sample = 0 ;	// ADC通道2采样总计
 u32 AM_ADC_Channel3_Sample = 0 ;	// ADC通道3采样总计
+u32 AM_ADC_Channel6_Sample = 0 ;	// ADC通道6采样总计
 	
-volatile u16 AV_ADC_Channel1_Sample = 2047 ;	// ADC_CH1平均值（设置初值为中间位置）
-volatile u16 AV_ADC_Channel3_Sample = 2047 ;	// ADC_CH3平均值（设置初值为中间位置）
+volatile u16 AV_ADC_Channel1_Sample = 2047 ;	// ADC_CH1平均值（设置初值为中间位置） 左摇杆下上
+volatile u16 AV_ADC_Channel2_Sample = 2047 ;	// ADC_CH2平均值（设置初值为中间位置） 左摇杆右左
+volatile u16 AV_ADC_Channel3_Sample = 2047 ;	// ADC_CH3平均值（设置初值为中间位置） 右摇杆右左
+volatile u16 AV_ADC_Channel6_Sample = 2047 ;	// ADC_CH6平均值（设置初值为中间位置） 右摇杆下上
 //------------------------------------------------------------------------------
 
 
@@ -60,8 +64,14 @@ void ADC1_Rocker_Init(void)
 	ADC_RegularChannelConfig(ADC1, N_ADC_Channel_1, 1, ADC_SampleTime_239Cycles5);	// 参数：ADC1,要设置的ADC通道序号,规则组采样顺序,采样周期
 	// 此函数：配置的是"ADC1"的通道"1"，它在规则组中的采样顺序是"1"，采样周期是"ADC_SampleTime_239Cycles5"
 	
-	ADC_RegularChannelConfig(ADC1, N_ADC_Channel_3, 2, ADC_SampleTime_239Cycles5);
-	// 此函数：配置的是"ADC1"的通道"3"，它在规则组中的采样顺序是"2"，采样周期是"ADC_SampleTime_239Cycles5"
+	ADC_RegularChannelConfig(ADC1, N_ADC_Channel_2, 2, ADC_SampleTime_239Cycles5);
+	// 此函数：配置的是"ADC1"的通道"2"，它在规则组中的采样顺序是"2"，采样周期是"ADC_SampleTime_239Cycles5"
+
+	ADC_RegularChannelConfig(ADC1, N_ADC_Channel_3, 3, ADC_SampleTime_239Cycles5);
+	// 此函数：配置的是"ADC1"的通道"3"，它在规则组中的采样顺序是"3"，采样周期是"ADC_SampleTime_239Cycles5"
+
+	ADC_RegularChannelConfig(ADC1, N_ADC_Channel_6, 4, ADC_SampleTime_239Cycles5);
+	// 此函数：配置的是"ADC1"的通道"6"，它在规则组中的采样顺序是"4"，采样周期是"ADC_SampleTime_239Cycles5"
 	//---------------------------------------------------------------------------------------------------------------------
 	
 	
@@ -109,9 +119,9 @@ void ADC1_Value_average(void)
 	//while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC ));		// 等待转换结束
 		
 	AM_ADC_Channel1_Sample += ADC1_Value[C_ADC_Sample][0];	// 得到
-		
-	AM_ADC_Channel3_Sample += ADC1_Value[C_ADC_Sample][1];
-
+	AM_ADC_Channel2_Sample += ADC1_Value[C_ADC_Sample][1];	
+	AM_ADC_Channel3_Sample += ADC1_Value[C_ADC_Sample][2];
+	AM_ADC_Channel6_Sample += ADC1_Value[C_ADC_Sample][3];
 	C_ADC_Sample++ ;	// ADC实际采样次数
 
 	// 判断是否已经采样10次
@@ -123,10 +133,17 @@ void ADC1_Value_average(void)
 		
 		AM_ADC_Channel1_Sample = 0 ;
 		
+		AV_ADC_Channel2_Sample = AM_ADC_Channel2_Sample / C_Channel_Sample;		// 求通道2的平均值
 		
+		AM_ADC_Channel2_Sample = 0 ;
+
 		AV_ADC_Channel3_Sample = AM_ADC_Channel3_Sample / C_Channel_Sample;		// 求通道3的平均值
 		
 		AM_ADC_Channel3_Sample = 0 ;
+
+		AV_ADC_Channel6_Sample = AM_ADC_Channel6_Sample / C_Channel_Sample;		// 求通道6的平均值
+		
+		AM_ADC_Channel6_Sample = 0 ;
 	}
 
 }

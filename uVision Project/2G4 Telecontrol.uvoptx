@@ -163,27 +163,27 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>AV_ADC_Channel1_Sample,0x0A</ItemText>
+          <ItemText>RF2G4_Send_Data,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>AV_ADC_Channel3_Sample,0x0A</ItemText>
+          <ItemText>AV_ADC_Channel1_Sample/16,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>AV_ADC_Channel1_Sample / 16,0x0A</ItemText>
+          <ItemText>AV_ADC_Channel2_Sample/16,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>AV_ADC_Channel3_Sample / 16,0x0A</ItemText>
+          <ItemText>AV_ADC_Channel3_Sample/16,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RF2G4_Send_Data,0x0A</ItemText>
+          <ItemText>AV_ADC_Channel6_Sample/16,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

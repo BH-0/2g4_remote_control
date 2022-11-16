@@ -139,7 +139,7 @@ int main(void)
 				J_2G4_Data_Send += RF2G4_Send_Data[L_CNT];
 			}
 			
-			if( J_2G4_Data_Send == 0 && RF2G4_Send_Data[12]>118 && RF2G4_Send_Data[12]<137  && RF2G4_Send_Data[13]>118 && RF2G4_Send_Data[13]<137 ) //判断到无动作
+			if( J_2G4_Data_Send == 0 && RF2G4_Send_Data[12]>118 && RF2G4_Send_Data[12]<145  && RF2G4_Send_Data[13]>118 && RF2G4_Send_Data[13]<145 ) //判断到无动作
 			{
 				if( F_No_motion == 0 )
 				{
