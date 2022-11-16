@@ -1,0 +1,103 @@
+T093C 000:186.632   SEGGER J-Link V7.82a Log File
+T093C 000:186.739   DLL Compiled: Oct 31 2022 11:15:01
+T093C 000:186.742   Logging started @ 2022-11-15 10:47
+T093C 000:186.745 - 186.747ms
+T093C 000:186.754 JLINK_SetWarnOutHandler(...)
+T093C 000:186.758 - 0.005ms
+T093C 000:186.762 JLINK_OpenEx(...)
+T093C 000:188.575   Firmware: J-Link V12 compiled Jul 27 2020 14:00:11
+T093C 000:189.289   Firmware: J-Link V12 compiled Jul 27 2020 14:00:11
+T093C 000:192.740   Hardware: V10.10
+T093C 000:192.766   S/N: 4294967295
+T093C 000:192.770   OEM: SEGGER
+T093C 000:192.777   Feature(s): GDB, RDI, FlashBP, FlashDL, JFlash
+T093C 000:194.986   TELNET listener socket opened on port 19021
+T093C 000:195.065   WEBSRV WEBSRV_Init(): Starting webserver thread(s)
+T093C 000:195.285   WEBSRV Webserver running on local port 19080
+T093C 000:207.581 - 20.837ms returns "O.K."
+T093C 000:207.629 JLINK_GetEmuCaps()
+T093C 000:207.633 - 0.005ms returns 0xB9FF7BBF
+T093C 000:207.642 JLINK_TIF_GetAvailable(...)
+T093C 000:208.179 - 0.566ms
+T093C 000:208.216 JLINK_SetErrorOutHandler(...)
+T093C 000:208.220 - 0.004ms
+T093C 000:208.244 JLINK_ExecCommand("ProjectFile = "D:\10031\Desktop\game_handle\uVision Project\JLinkSettings.ini"", ...). 
+T093C 000:219.183   Ref file found at: D:\MDK\Keil_v5\ARM\Segger\JLinkDevices.ref
+T093C 000:219.254   REF file references invalid XML file: C:\Program Files (x86)\SEGGER\JLink\JLinkDevices.xml
+T093C 000:219.371 - 11.130ms returns 0x00
+T093C 000:219.388 JLINK_ExecCommand("Device = STM32F103CB", ...). 
+T093C 000:219.576   Device "STM32F103CB" selected.
+T093C 000:220.583 - 1.195ms returns 0x00
+T093C 000:220.593 JLINK_ExecCommand("DisableConnectionTimeout", ...). 
+T093C 000:220.599 - 0.002ms returns 0x01
+T093C 000:220.603 JLINK_GetHardwareVersion()
+T093C 000:220.607 - 0.004ms returns 101000
+T093C 000:220.613 JLINK_GetDLLVersion()
+T093C 000:220.616 - 0.004ms returns 78201
+T093C 000:220.619 JLINK_GetOEMString(...)
+T093C 000:220.623 JLINK_GetFirmwareString(...)
+T093C 000:220.626 - 0.004ms
+T093C 000:220.632 JLINK_GetDLLVersion()
+T093C 000:220.635 - 0.004ms returns 78201
+T093C 000:220.638 JLINK_GetCompileDateTime()
+T093C 000:220.641 - 0.004ms
+T093C 000:220.646 JLINK_GetFirmwareString(...)
+T093C 000:220.649 - 0.004ms
+T093C 000:220.653 JLINK_GetHardwareVersion()
+T093C 000:220.656 - 0.004ms returns 101000
+T093C 000:220.660 JLINK_GetSN()
+T093C 000:220.664 - 0.005ms returns -1
+T093C 000:220.667 JLINK_GetOEMString(...)
+T093C 000:220.673 JLINK_TIF_Select(JLINKARM_TIF_SWD)
+T093C 000:222.357 - 1.688ms returns 0x00
+T093C 000:222.365 JLINK_HasError()
+T093C 000:222.382 JLINK_SetSpeed(5000)
+T093C 000:222.697 - 0.318ms
+T093C 000:222.982 JLINK_HasError()
+T093C 000:222.991 JLINK_SetResetType(JLINKARM_RESET_TYPE_NORMAL)
+T093C 000:222.995 - 0.004ms returns JLINKARM_RESET_TYPE_NORMAL
+T093C 000:222.999 JLINK_Reset()
+T093C 000:223.435   InitTarget() start
+T093C 000:223.441    J-Link Script File: Executing InitTarget()
+T093C 000:827.306   Can not attach to CPU. Trying connect under reset.
+T093C 001:481.606   Connecting to CPU via connect under reset failed.
+T093C 001:532.031   InitTarget() end
+T093C 001:532.073   Connect failed. Resetting via Reset pin and trying again.
+T093C 001:595.380   InitTarget() start
+T093C 001:595.398    J-Link Script File: Executing InitTarget()
+T093C 002:199.143   Can not attach to CPU. Trying connect under reset.
+T093C 002:853.716   Connecting to CPU via connect under reset failed.
+T093C 002:905.212   InitTarget() end
+T093C 002:905.271 - 2682.274ms
+T093C 002:905.283 JLINK_GetId()
+T093C 002:905.794   InitTarget() start
+T093C 002:905.800    J-Link Script File: Executing InitTarget()
+T093C 003:509.312   Can not attach to CPU. Trying connect under reset.
+T093C 004:164.267   Connecting to CPU via connect under reset failed.
+T093C 004:215.221   InitTarget() end
+T093C 004:215.236   Connect failed. Resetting via Reset pin and trying again.
+T093C 004:278.847   InitTarget() start
+T093C 004:278.863    J-Link Script File: Executing InitTarget()
+T093C 004:882.386   Can not attach to CPU. Trying connect under reset.
+T093C 005:535.908   Connecting to CPU via connect under reset failed.
+T093C 005:587.065   InitTarget() end
+T093C 005:587.901 - 2682.620ms returns 0x00000000
+T093C 005:587.914 JLINK_GetId()
+T093C 005:588.492   InitTarget() start
+T093C 005:588.503    J-Link Script File: Executing InitTarget()
+T093C 006:192.330   Can not attach to CPU. Trying connect under reset.
+T093C 006:847.592   Connecting to CPU via connect under reset failed.
+T093C 006:898.120   InitTarget() end
+T093C 006:898.139   Connect failed. Resetting via Reset pin and trying again.
+T093C 006:961.108   InitTarget() start
+T093C 006:961.120    J-Link Script File: Executing InitTarget()
+T093C 007:564.322   Can not attach to CPU. Trying connect under reset.
+T093C 008:219.374   Connecting to CPU via connect under reset failed.
+T093C 008:269.945   InitTarget() end
+T093C 008:269.960 - 2682.047ms returns 0x00000000
+T093C 008:275.313 JLINK_GetFirmwareString(...)
+T093C 008:275.327 - 0.015ms
+T093C 009:799.210 JLINK_Close()
+T093C 009:824.286 - 25.091ms
+T093C 009:824.303   
+T093C 009:824.306   Closed
