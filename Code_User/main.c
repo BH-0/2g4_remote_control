@@ -32,6 +32,8 @@
 #include "spi.h"
 #include "rf2G4.h"
 #include "dma.h"
+#include "usart.h"
+#include "usmart.h"	
 
 
 // 全局变量
@@ -62,6 +64,10 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	 //NVIC分组2：2位抢占优先级，2位响应优先级
 	
 	delay_Init();				// 延时初始化（注：调用延时函数之前，必须先调用delay_Init()将SysTick初始化）
+
+    uart_init(115200);          //初始化串口1
+
+    usmart_dev.init(SystemCoreClock/1000000);	//初始化USMART
 	
 	LED_Init_JX() ;				// 初始化LED硬件接口：Green--PB4、Blue--PB5
 	
@@ -74,6 +80,7 @@ int main(void)
 	ADC1_Rocker_Init();			// ADC初始化（摇杆）
 	
 	RF2G4_Init();				// 2.4G无线射频初始化
+
 	
 	// 初始化OLED
 	//-----------------------------------------

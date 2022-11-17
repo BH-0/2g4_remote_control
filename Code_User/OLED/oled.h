@@ -3,6 +3,7 @@
 
 
 #include "stm32f10x.h"
+#include <math.h>
 
 
 /*--------------------引脚定义--------------------------*/
@@ -47,6 +48,15 @@ void OLED_Set_Pos(unsigned char x, unsigned char y);		//画点函数
 void OLED_ShowCHinese(unsigned char x,unsigned char y,unsigned char no); //声明在指定位置显示汉字函数
 void OLED_DrawBMP(unsigned char x0, unsigned char y0,unsigned char x1, unsigned char y1,unsigned char BMP[]); //显示图片函数
 void OLED_Scroll(void);	//滚动函数
+
+//画点函数
+void OLED_DrawPoint(int16_t x,int16_t y);
+
+//将显示内存刷新至oled，入口参数为刷新坐标
+void OLED_Renew(u8 x); 
+
+// 画圆(x,y为圆?坐标，r为圆的半径，圆?的真实物理位置是x,y这个像素的左上?)
+void DrawCircle(int x1, int y1, int r);
 
 #endif  
 	 

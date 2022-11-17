@@ -13,6 +13,163 @@
 #include "oledfont.h" 
 /*definition--------------------------------------------*/
 
+unsigned char oled_RAM[128][8] = {0};
+/*
+void DrawEcho()
+{
+ int Radius = max(display.width(),display.height())/2+12;
+ for(int16_t i=0; i < Radius; i+=2) 
+ {
+    display.clearDisplay();
+    
+    display.drawCircle(display.width() / 2, display.height() / 2, i, SSD1306_WHITE);
+
+    display.drawCircle(display.width() / 2, display.height() / 2, (i + Radius/3) % Radius, SSD1306_WHITE);
+
+    display.drawCircle(display.width() / 2, display.height() / 2, (i + Radius*2/3) % Radius, SSD1306_WHITE);
+    
+    display.display(); // Update screen with each newly-drawn circle
+    delay(1);
+  }  
+}
+*/
+
+// //限制数到给定的最大值
+// void OLED_LimMax(int *Dat, int Lim)
+// {
+// 	if ((*Dat) >= Lim)
+// 		(*Dat) = Lim;
+// }
+// //限制数到给定的最小值
+// void OLED_LimMin(int *Dat, int Lim)
+// {
+// 	if ((*Dat) <= Lim)
+// 		(*Dat) = Lim;
+// }
+// //画圆和圆弧用 限制最大最小值
+// void OLED_CandA_LimMaxMin(int *X_Left, int *X_Right, int *Y_Up, int *Y_Down)
+// {
+// 	OLED_LimMin(X_Left, 0);
+// 	OLED_LimMin(Y_Up, 0);
+// 	OLED_LimMax(X_Right, 127);
+// 	OLED_LimMax(Y_Down, 63);
+// }
+//将显示内存刷新至oled，入口参数为刷新坐标
+void OLED_Renew(u8 x)
+{
+	u8 i,n;
+	for(i=0;i<8;i++)
+	{
+		OLED_WR_Byte (0xb0+i,OLED_CMD);
+		OLED_WR_Byte (0x00,OLED_CMD);
+		OLED_WR_Byte (0x10,OLED_CMD);
+		for(n=0;n<=x;n++){
+			OLED_WR_Byte(oled_RAM[n][i],OLED_DATA);
+		}
+	}
+}
+
+//画点函数
+void OLED_DrawPoint(int16_t x,int16_t y)
+{
+	double abs_y=y/8;
+	double tem_y;
+	u8 dat;
+	
+	if(x>127 || y>63 || x<0 || y<0)	//限制点的范围	
+		return;
+		
+	tem_y=y%8;
+	abs_y=ceil(abs_y);
+	switch((u8)tem_y){
+	case 0:dat=0x01;break;
+	case 1:dat=0x02;break;
+	case 2:dat=0x04;break;
+	case 3:dat=0x08;break;
+	case 4:dat=0x10;break;
+	case 5:dat=0x20;break;
+	case 6:dat=0x40;break;
+	case 7:dat=0x80;break;
+	}
+	oled_RAM[x][(u8)abs_y]+=dat;
+	OLED_Renew(x);
+}
+
+// 画圆(x,y为圆?坐标，r为圆的半径，圆?的真实物理位置是x,y这个像素的左上?)
+//void DrawCircle(int x, int y, int r)
+//{
+//	int xi;
+//	int yi;
+//	int di;
+//	di = 0 - (r >> 1);
+//	xi = 0;
+//	yi = r;
+//	while (yi >= xi)
+//	{
+//		OLED_DrawPoint(x + xi - 1, y + yi - 1);
+//		OLED_DrawPoint(x + yi - 1, y + xi - 1);
+//		OLED_DrawPoint(x - xi, y + yi - 1);
+//		OLED_DrawPoint(x - yi, y + xi - 1);
+//		OLED_DrawPoint(x - xi, y - yi);
+//		OLED_DrawPoint(x - yi, y - xi);
+//		OLED_DrawPoint(x + xi - 1, y - yi);
+//		OLED_DrawPoint(x + yi - 1, y - xi);
+//		xi++;
+//		if (di < 0)
+//		{
+//			di += xi;
+//		}
+//		else
+//		{
+//			yi--;
+//			di += xi - yi;
+//		}
+//	}
+//}
+
+
+
+
+void DrawCircle(int x1, int y1, int r) 
+{
+	u8 x0 = 64;
+	u8 y0 = 32;                    //定义全局变量x0,y0:坐标轴中心（x0,y0
+	int d0, x = 0, y = r;//d0是判别式的值
+	d0 = 1.25 - r;   //判别式的初始值，1.25可以改为1
+	while (x < y) 
+	{
+		if (d0 >= 0) 
+		{
+			d0 = d0 + 2 * (x - y) + 5;            //d0一定要先比x,y更新
+			x += 1;                //因为d0表达式中的x,y是上一个点
+			y -= 1;
+			OLED_DrawPoint(((x + x1) + x0), (y0 - (y + y1)));         //(x,y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 - (y + y1)));        //(-x,y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 - (x + y1)));         //(y,x)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 - (x + y1)));        //(-y,x)
+			OLED_DrawPoint(((x + x1) + x0), (y0 - (-y + y1)));        //(x,-y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 - (-y + y1)));       //(-x,-y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 - (-x + y1)));        //(y,-y)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 - (-x + y1)));       //(-y,-x)
+
+		}
+		else 
+		{
+			d0 = d0 + 2 * x + 3;
+			x += 1;
+			y = y;
+			OLED_DrawPoint(((x + x1) + x0), (y0 - (y + y1)));         //(x,y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 - (y + y1)));        //(-x,y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 - (x + y1)));         //(y,x)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 - (x + y1)));        //(-y,x)
+			OLED_DrawPoint(((x + x1) + x0), (y0 - (-y + y1)));        //(x,-y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 - (-y + y1)));       //(-x,-y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 - (-x + y1)));        //(y,-y)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 - (-x + y1)));       //(-y,-x)
+
+		}
+	}
+}
 
 
 /*
@@ -188,7 +345,11 @@ void OLED_Clear(void)
 		OLED_WR_Byte (0xb0+i,OLED_CMD);    //从0~7页依次写入
 		OLED_WR_Byte (0x00,OLED_CMD);      //列低地址
 		OLED_WR_Byte (0x10,OLED_CMD);      //列高地址  
-		for(n=0;n<128;n++)OLED_WR_Byte(0,OLED_DATA); //写入 0 清屏
+		for(n=0;n<128;n++)
+		{
+			OLED_WR_Byte(0,OLED_DATA); //写入 0 清屏
+			oled_RAM[n][i]=0;
+		}
 	}
 }
 
