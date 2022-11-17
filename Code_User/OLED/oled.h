@@ -3,6 +3,7 @@
 
 
 #include "stm32f10x.h"
+#include "delay.h"
 #include <math.h>
 
 
@@ -57,6 +58,10 @@ void OLED_Renew(u8 x);
 
 // 画圆(x,y为圆?坐标，r为圆的半径，圆?的真实物理位置是x,y这个像素的左上?)
 void DrawCircle(int x1, int y1, int r);
+
+
+//画涟漪
+void DrawEcho(void);
 
 #endif  
 	 

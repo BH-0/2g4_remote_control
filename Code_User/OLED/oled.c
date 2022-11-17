@@ -14,25 +14,7 @@
 /*definition--------------------------------------------*/
 
 unsigned char oled_RAM[128][8] = {0};
-/*
-void DrawEcho()
-{
- int Radius = max(display.width(),display.height())/2+12;
- for(int16_t i=0; i < Radius; i+=2) 
- {
-    display.clearDisplay();
-    
-    display.drawCircle(display.width() / 2, display.height() / 2, i, SSD1306_WHITE);
 
-    display.drawCircle(display.width() / 2, display.height() / 2, (i + Radius/3) % Radius, SSD1306_WHITE);
-
-    display.drawCircle(display.width() / 2, display.height() / 2, (i + Radius*2/3) % Radius, SSD1306_WHITE);
-    
-    display.display(); // Update screen with each newly-drawn circle
-    delay(1);
-  }  
-}
-*/
 
 // //限制数到给定的最大值
 // void OLED_LimMax(int *Dat, int Lim)
@@ -92,48 +74,15 @@ void OLED_DrawPoint(int16_t x,int16_t y)
 	case 7:dat=0x80;break;
 	}
 	oled_RAM[x][(u8)abs_y]+=dat;
-	OLED_Renew(x);
+
 }
 
-// 画圆(x,y为圆?坐标，r为圆的半径，圆?的真实物理位置是x,y这个像素的左上?)
-//void DrawCircle(int x, int y, int r)
-//{
-//	int xi;
-//	int yi;
-//	int di;
-//	di = 0 - (r >> 1);
-//	xi = 0;
-//	yi = r;
-//	while (yi >= xi)
-//	{
-//		OLED_DrawPoint(x + xi - 1, y + yi - 1);
-//		OLED_DrawPoint(x + yi - 1, y + xi - 1);
-//		OLED_DrawPoint(x - xi, y + yi - 1);
-//		OLED_DrawPoint(x - yi, y + xi - 1);
-//		OLED_DrawPoint(x - xi, y - yi);
-//		OLED_DrawPoint(x - yi, y - xi);
-//		OLED_DrawPoint(x + xi - 1, y - yi);
-//		OLED_DrawPoint(x + yi - 1, y - xi);
-//		xi++;
-//		if (di < 0)
-//		{
-//			di += xi;
-//		}
-//		else
-//		{
-//			yi--;
-//			di += xi - yi;
-//		}
-//	}
-//}
 
-
-
-
+//画圆
 void DrawCircle(int x1, int y1, int r) 
 {
-	u8 x0 = 64;
-	u8 y0 = 32;                    //定义全局变量x0,y0:坐标轴中心（x0,y0
+	u8 x0 = 0;
+	u8 y0 = 0;                    //定义全局变量x0,y0:坐标轴中心（x0,y0
 	int d0, x = 0, y = r;//d0是判别式的值
 	d0 = 1.25 - r;   //判别式的初始值，1.25可以改为1
 	while (x < y) 
@@ -143,14 +92,14 @@ void DrawCircle(int x1, int y1, int r)
 			d0 = d0 + 2 * (x - y) + 5;            //d0一定要先比x,y更新
 			x += 1;                //因为d0表达式中的x,y是上一个点
 			y -= 1;
-			OLED_DrawPoint(((x + x1) + x0), (y0 - (y + y1)));         //(x,y)
-			OLED_DrawPoint(((-x + x1) + x0), (y0 - (y + y1)));        //(-x,y)
-			OLED_DrawPoint(((y + x1) + x0), (y0 - (x + y1)));         //(y,x)
-			OLED_DrawPoint(((-y + x1) + x0), (y0 - (x + y1)));        //(-y,x)
-			OLED_DrawPoint(((x + x1) + x0), (y0 - (-y + y1)));        //(x,-y)
-			OLED_DrawPoint(((-x + x1) + x0), (y0 - (-y + y1)));       //(-x,-y)
-			OLED_DrawPoint(((y + x1) + x0), (y0 - (-x + y1)));        //(y,-y)
-			OLED_DrawPoint(((-y + x1) + x0), (y0 - (-x + y1)));       //(-y,-x)
+			OLED_DrawPoint(((x + x1) + x0), (y0 + (y + y1)));         //(x,y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 + (y + y1)));        //(-x,y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 + (x + y1)));         //(y,x)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 + (x + y1)));        //(-y,x)
+			OLED_DrawPoint(((x + x1) + x0), (y0 + (-y + y1)));        //(x,-y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 + (-y + y1)));       //(-x,-y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 + (-x + y1)));        //(y,-y)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 + (-x + y1)));       //(-y,-x)
 
 		}
 		else 
@@ -158,33 +107,57 @@ void DrawCircle(int x1, int y1, int r)
 			d0 = d0 + 2 * x + 3;
 			x += 1;
 			y = y;
-			OLED_DrawPoint(((x + x1) + x0), (y0 - (y + y1)));         //(x,y)
-			OLED_DrawPoint(((-x + x1) + x0), (y0 - (y + y1)));        //(-x,y)
-			OLED_DrawPoint(((y + x1) + x0), (y0 - (x + y1)));         //(y,x)
-			OLED_DrawPoint(((-y + x1) + x0), (y0 - (x + y1)));        //(-y,x)
-			OLED_DrawPoint(((x + x1) + x0), (y0 - (-y + y1)));        //(x,-y)
-			OLED_DrawPoint(((-x + x1) + x0), (y0 - (-y + y1)));       //(-x,-y)
-			OLED_DrawPoint(((y + x1) + x0), (y0 - (-x + y1)));        //(y,-y)
-			OLED_DrawPoint(((-y + x1) + x0), (y0 - (-x + y1)));       //(-y,-x)
+			OLED_DrawPoint(((x + x1) + x0), (y0 + (y + y1)));         //(x,y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 + (y + y1)));        //(-x,y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 + (x + y1)));         //(y,x)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 + (x + y1)));        //(-y,x)
+			OLED_DrawPoint(((x + x1) + x0), (y0 + (-y + y1)));        //(x,-y)
+			OLED_DrawPoint(((-x + x1) + x0), (y0 + (-y + y1)));       //(-x,-y)
+			OLED_DrawPoint(((y + x1) + x0), (y0 + (-x + y1)));        //(y,-y)
+			OLED_DrawPoint(((-y + x1) + x0), (y0 + (-x + y1)));       //(-y,-x)
 
 		}
 	}
+    	
 }
 
-
-/*
-	@brief			ms延迟函数
-	@param			无
-	@retval			无
-*/
-static void delay_ms(unsigned int ms)//延迟函数，MS级别
+//画涟漪
+void DrawEcho(void)
 {
-	unsigned int x,y;
-	for(x = ms;x>0;x--)
+    uint8_t width = 127;
+    uint8_t height = 63;
+    uint16_t i = 0;
+ int Radius = (width>height?width:height)/2+12;
+ for(i=0; i < Radius; i+=2) 
  {
-		for(y = 12000;y>0;y--);
- }
+    OLED_Clear();
+    
+    DrawCircle(width / 2, height / 2, i );
+
+    DrawCircle(width / 2, height / 2, (i + Radius/3) % Radius );
+
+    DrawCircle(width / 2, height / 2, (i + Radius*2/3) % Radius );
+    
+    OLED_Renew(127);   // Update screen with each newly-drawn circle
+    delay_ms(10);
+  }  
 }
+
+
+
+///*
+//	@brief			ms延迟函数
+//	@param			无
+//	@retval			无
+//*/
+//static void delay_ms(unsigned int ms)//延迟函数，MS级别
+//{
+//	unsigned int x,y;
+//	for(x = ms;x>0;x--)
+// {
+//		for(y = 12000;y>0;y--);
+// }
+//}
 
 
 /*
