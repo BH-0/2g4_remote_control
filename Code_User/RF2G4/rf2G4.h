@@ -7,6 +7,7 @@
 #include "spi.h"
 #include "key.h"
 #include "adc.h"
+#include "oled.h"
 
 //--------------------------------------
 // 2G4通信地址
@@ -104,6 +105,13 @@ void RF2G4_TX_Mode(void);	// 初始化SI24R1为发射模式
 
 u8 RF2G4_Tx_Packet(u8* P_Data,u8 N_Data);	// SI24R1发送一帧数据
 u8 RF2G4_Rx_Packet(u8* P_Data,u8 N_Data);	// SI24R1接收一帧数据
+
+//快速切换
+void RF2G4_RX_Mode_X(void);
+void RF2G4_TX_Mode_X(void);
+
+//握手请求函数
+void handshake(void);
 //-------------------------------------------------------------------------------------
 
 #endif	/* __RF2G4_H */

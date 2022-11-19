@@ -43,6 +43,8 @@ u16 C_TIM2_IT_Update = 0 ;	// TIM3的定时计次
 u8  One_Ms_Timing = 0 ;		// 1ms全局时基
 
 u8 F_2G4_Send = 0 ;			// RF准备发射标志位
+
+u8 F_2G4_Receive = 0 ;			// RF准备接收志位
 //------------------------------------------------------------------
 
 
@@ -52,8 +54,9 @@ int main(void)
 	// 变量定义
 	//------------------------------------------------------------
 	u8 L_CNT = 0 ;				// 循环计数
-	
-	u8 J_2G4_Data_Send = 0;		// 标志位：判断是否需发射数据
+	u8 sum = 0 ;	//计时
+	u16 ret = 0 ;	//返回值
+	//u8 J_2G4_Data_Send = 0;		// 标志位：判断是否需发射数据
 	
 	volatile u8 F_No_motion = 0 ;		// 标志位：当前无动作
 	//------------------------------------------------------------
@@ -92,26 +95,24 @@ int main(void)
 	// 判断SI24R1是否正常
 	//-----------------------------------------
 	if(RF2G4_Check())
-	{ OLED_ShowString(0, 2, "2G4 ERROR"); }
-	else
-	{ OLED_ShowString(0, 2, "2G4 OK"); }
+	{ 
+		OLED_ShowString(0, 2, "2G4 ERROR");
+		while(1){}
+	}
+	// else
+	// { OLED_ShowString(0, 2, "2G4 OK"); }
 	//-----------------------------------------
 	
-	RF2G4_TX_Mode();	// 将SI24R1设置为发射模式
-
-   while(1)    //等待连接
-   {
-       	DrawEcho();
-		//发送握手包
-		
-
-   }
-	
+	handshake();	//握手
+	OLED_ShowString(0, 0, "connected!");
+	// RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		// 发射指令
+	// RF2G4_RX_Mode_X();	//切换为接收
+	delay_ms(100);
 	while(1)
 	{  
-		// 1ms时基
+#if 1
 		//------------------------------------------------------------------
-		if( One_Ms_Timing == 1 )
+		if( One_Ms_Timing == 1 )// 1ms时基
 		{
 			One_Ms_Timing = 0 ;
 			
@@ -137,14 +138,49 @@ int main(void)
 			RF2G4_Send_Data[13] = (u8)(AV_ADC_Channel6_Sample / 16);    //放入摇杆值
 		}
 		//------------------------------------------------------------------
-		
-		
+#endif
+
+        
+		//--------------------------------
+		if( F_2G4_Send == 1 )// 射频发送(50ms发射一帧数据)
+		{
+			F_2G4_Send = 0;		// 清除发射标志位
+			RF2G4_TX_Mode_X();	//切换为发送
+			RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		// 发射指令
+			//RF2G4_RX_Mode_X();	//切换为接收
+			LED_Blue =!LED_Blue;  //发射
+			//刷新oled
+			sum++;
+		}
+		else if(F_2G4_Receive == 1)	//10ms接收
+		 {
+			F_2G4_Receive = 0;
+			RF2G4_RX_Mode_X();	//切换为接收
+			ret = RF2G4_Rx_Packet((u8 *)RF2G4_Receive_Data, 14);
+			if (ret == 0) //收到了数据
+			{
+				printf("%d:收到数据\r\n",sum);
+				sum = 0;
+				LED_Green =!LED_Green;  //接收
+			}
+		}
+
+		if(sum > 10)	//断开连接
+		{
+			handshake();	//等待重连
+			sum = 0;	//重新连接成功
+			OLED_ShowString(0, 0, "connected!");
+		}
+	}
+}
+
+
+/***************
 		// 射频发送(50ms发射一帧数据)
 		//--------------------------------
 		if( F_2G4_Send == 1 )
 		{
 			F_2G4_Send = 0;		// 清除发射标志位
-			
 			
 			// 判断按键/摇杆的位置（无按键/中间档位，不发射，降低功耗）
 			//-----------------------------------------------------
@@ -153,6 +189,7 @@ int main(void)
 				J_2G4_Data_Send += RF2G4_Send_Data[L_CNT];
 			}
 			
+#if 0	//有动作才发射
 			if( J_2G4_Data_Send == 0 &&
 			 	RF2G4_Send_Data[10]>118 && RF2G4_Send_Data[10]<145 && 
 			 	RF2G4_Send_Data[11]>118 && RF2G4_Send_Data[11]<145 &&
@@ -176,7 +213,9 @@ int main(void)
 				
 				RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		// 发射指令
 			}
-		}
-	}
-}
+#else	//50ms直接发射
+			RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		// 发射指令
 
+#endif
+		}
+***************/

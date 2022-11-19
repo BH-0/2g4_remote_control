@@ -166,6 +166,7 @@ extern u8  One_Ms_Timing ;		// 1ms全局时基
 
 extern u8 F_2G4_Send;			// RF准备发射标志位
 
+extern u8 F_2G4_Receive;			// RF准备接收志位
 // 定时器3中断服务程序	 
 // 1ms中断一次
 //---------------------------------------------------------------------------------------
@@ -190,9 +191,13 @@ void TIM3_IRQHandler(void)
 			
 			F_2G4_Send = 1;		// 50ms发射一次射频
 			
-			LED_Green =!LED_Green;
-			LED_Blue =!LED_Blue;
+			
 		}
+    else if(C_TIM2_IT_Update % 10 == 0 )  //接收10ms时基
+    {
+        F_2G4_Receive = 1;	// 10ms接收一次
+        
+    }
 		//---------------------------------------------------
 	}
 }

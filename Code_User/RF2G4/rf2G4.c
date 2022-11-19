@@ -7,7 +7,7 @@ const u8 RF2G4_ADDR_TX[5] = { 'B', 'H', '-', '-', '1' } ;		// 0X6A,0X69,0X78,0X6
 const u8 RF2G4_ADDR_RX[5] = { 'B', 'H', '-', '-', '1' } ;		// ASCII：jixin
 //------------------------------------------------------------------------------------------
 
-volatile u8 RF2G4_Send_Data[14] = { 0 };		// 2.4G发射数据缓存数组
+volatile u8 RF2G4_Send_Data[14] = { 0 };//0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0xBB,};		// 2.4G发射数据缓存数组
 			 
 u8 RF2G4_Receive_Data[14] = { 0 };	// 2.4G接收数据缓存数组
 
@@ -196,7 +196,7 @@ void RF2G4_RX_Mode(void)
 	RF2G4_CE = 0;	  
   	RF2G4_Write_Cont(W_REGISTER+RX_ADDR_P0, (u8*)RF2G4_ADDR_RX, RX_ADR_WIDTH);	// 设置RX节点地址
 	  
-  	RF2G4_Write_Reg(W_REGISTER+EN_AA,0x01);    		// 使能通道0的自动应答
+  	RF2G4_Write_Reg(W_REGISTER+EN_AA,0x01);    		// 使能通道0的自动应答	0x01
   	RF2G4_Write_Reg(W_REGISTER+EN_RXADDR,0x01);		// 使能通道0的接收地址
   	RF2G4_Write_Reg(W_REGISTER+RF_CH,40);	     	// 设置RF通信频率
   	RF2G4_Write_Reg(W_REGISTER+RX_PW_P0,14);		// 设置通道0的有效数据宽度（14位）
@@ -214,9 +214,9 @@ void RF2G4_TX_Mode(void)
   	RF2G4_Write_Cont(W_REGISTER+TX_ADDR,(u8*)RF2G4_ADDR_TX,TX_ADR_WIDTH);		// 设置TX节点地址
   	RF2G4_Write_Cont(W_REGISTER+RX_ADDR_P0,(u8*)RF2G4_ADDR_RX,RX_ADR_WIDTH); 	// 设置RX节点地址（ACK）	  
 
-  	RF2G4_Write_Reg(W_REGISTER+EN_AA,0x01);     	// 使能通道0的自动应答    
+  	RF2G4_Write_Reg(W_REGISTER+EN_AA,0x01);     	// 使能通道0的自动应答	0x01    
   	RF2G4_Write_Reg(W_REGISTER+EN_RXADDR,0x01); 	// 使能通道0的接收地址  
-  	RF2G4_Write_Reg(W_REGISTER+SETUP_RETR,0x1A);	// 设置自动重发间隔时间:500us + 86us;最大自动重发次数:10次
+  	RF2G4_Write_Reg(W_REGISTER+SETUP_RETR,0xFF);	// 设置自动重发间隔时间:500us + 86us;最大自动重发次数:10次 0x1A
   	RF2G4_Write_Reg(W_REGISTER+RF_CH,40);       	// 设置RF通信频率
   	RF2G4_Write_Reg(W_REGISTER+RF_SETUP,0x27);  	// 设置:发射功率7dBm、射频数据率250kbps  
   	RF2G4_Write_Reg(W_REGISTER+CONFIG,0x0E);    	// 配置参数;接收模式、开机模式、CRC=2Byte、开启CRC、。。。
@@ -224,6 +224,30 @@ void RF2G4_TX_Mode(void)
 }
 //-------------------------------------------------------------------------------------------------------------------
 
+////////////////////////////////////////////////////////////////
+//用于快速切换
+void RF2G4_RX_Mode_X(void)
+{
+    RF2G4_CE = 0;
+    RF2G4_Write_Cont(W_REGISTER+RX_ADDR_P0, (u8*)RF2G4_ADDR_RX, RX_ADR_WIDTH);	// 设置RX节点地址
+
+    RF2G4_Write_Reg(W_REGISTER+RX_PW_P0,14);		// 设置通道0的有效数据宽度（14位）
+    RF2G4_Write_Reg(W_REGISTER+CONFIG, 0x0F);		// 配置参数;接收模式、开机模式、CRC=2Byte、开启CRC、。。。
+    RF2G4_CE = 1; 	// CE为高,进入接收模式
+}
+void RF2G4_TX_Mode_X(void)
+{
+    RF2G4_CE = 0;
+    RF2G4_Write_Cont(W_REGISTER+TX_ADDR,(u8*)RF2G4_ADDR_TX,TX_ADR_WIDTH);		// 设置TX节点地址
+    RF2G4_Write_Cont(W_REGISTER+RX_ADDR_P0,(u8*)RF2G4_ADDR_RX,RX_ADR_WIDTH); 	// 设置RX节点地址（ACK）
+
+    RF2G4_Write_Reg(W_REGISTER+SETUP_RETR,0x1A);	// 设置自动重发间隔时间:500us + 86us;最大自动重发次数:10次
+    RF2G4_Write_Reg(W_REGISTER+CONFIG,0x0E);    	// 配置参数;接收模式、开机模式、CRC=2Byte、开启CRC、。。。
+    RF2G4_CE = 1;	//CE为高,10us后启动发送
+}
+
+
+////////////////////////////////////////////////////////////////
 
 
 // SI24R1发送一帧数据
@@ -294,3 +318,38 @@ u8 RF2G4_Rx_Packet(u8* P_Data,u8 N_Data)
 }
 //-------------------------------------------------------------------------------------------
 
+
+
+//对从机握手请求函数
+void handshake(void)
+{
+	int ret = 0,sum = 0;
+	RF2G4_TX_Mode();	// 设置为发射模式
+	RF2G4_Send_Data[0] = 0xAA;
+	RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		//发送握手包
+	RF2G4_RX_Mode_X();	// 设置为接收模式
+	OLED_Clear(); 				// 清屏
+	while(1)    //等待连接
+	{
+		DrawEcho();	//连接动画
+		ret = RF2G4_Rx_Packet((u8 *)RF2G4_Receive_Data, 14);
+		if (ret == 0) //收到了数据
+		{
+			if(RF2G4_Receive_Data[0] == 0xAA)
+				break;
+		}
+		else if(sum >= 2)	
+		{
+			RF2G4_TX_Mode_X();	// 设置为发射模式
+			RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		//发送握手包
+			RF2G4_RX_Mode_X();	// 设置为接收模式
+			sum = 0;
+		}
+		sum++;
+		//delay_ms(10);
+	}
+	RF2G4_Send_Data[0] = 0;
+	RF2G4_Receive_Data[0] = 0;
+   	OLED_Clear();
+	//RF2G4_TX_Mode_X();	// 设置为发射模式
+}

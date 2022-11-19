@@ -139,7 +139,7 @@ void DrawEcho(void)
     DrawCircle(width / 2, height / 2, (i + Radius*2/3) % Radius );
     
     OLED_Renew(127);   // Update screen with each newly-drawn circle
-    delay_ms(10);
+	delay_ms(10);
   }  
 }
 
