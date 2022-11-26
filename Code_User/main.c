@@ -89,7 +89,7 @@ int main(void)
 	//-----------------------------------------
 	OLED_Init();				// 初始化OLED  
 	OLED_Clear(); 				// 清屏
-	OLED_ShowString(0, 0, "2.4G Telecontrol");
+	OLED_Printf(0, 0, "2.4G Telecontrol");
 	//-----------------------------------------
 	
 	// 判断SI24R1是否正常
@@ -102,7 +102,7 @@ int main(void)
 	// else
 	// { OLED_ShowString(0, 2, "2G4 OK"); }
 	//-----------------------------------------
-	
+	//for(;;);
 	handshake();	//握手
 	OLED_ShowString(0, 0, "connected!");
 	// RF2G4_Tx_Packet((u8 *)RF2G4_Send_Data,14);		// 发射指令

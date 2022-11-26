@@ -5,6 +5,10 @@
 #include "stm32f10x.h"
 #include "delay.h"
 #include <math.h>
+#include "stdarg.h"		  //  标准头文件
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 
 /*--------------------引脚定义--------------------------*/
@@ -27,7 +31,7 @@
 #define OLED_CMD  	0		//写命令
 #define OLED_DATA 	1		//写数据
 
-#define SIZE 		16		//显示字符的大小
+#define SIZE 		8		//显示字符的大小 16
 #define Max_Column	128		//最大列数
 #define Max_Row		64		//最大行数
 #define X_WIDTH 	128		//X轴的宽度
@@ -52,13 +56,16 @@ void OLED_Scroll(void);	//滚动函数
 
 //画点函数
 void OLED_DrawPoint(int16_t x,int16_t y);
-
+//画点 ,熄灭该点，x:0~127 , y:0~63
+void OLED_ClosePoint(int16_t x,int16_t y);
+	
 //将显示内存刷新至oled，入口参数为刷新坐标
 void OLED_Renew(u8 x); 
 
 // 画圆(x,y为圆?坐标，r为圆的半径，圆?的真实物理位置是x,y这个像素的左上?)
 void DrawCircle(int x1, int y1, int r);
 
+void OLED_Printf(u8 x , u8 y , char *p,... );	//OLED 格式化输出
 
 //画涟漪
 void DrawEcho(void);

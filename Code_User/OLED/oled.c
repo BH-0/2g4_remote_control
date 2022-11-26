@@ -50,7 +50,7 @@ void OLED_Renew(u8 x)
 		}
 	}
 }
-
+#if 0
 //画点函数
 void OLED_DrawPoint(int16_t x,int16_t y)
 {
@@ -76,6 +76,21 @@ void OLED_DrawPoint(int16_t x,int16_t y)
 	oled_RAM[x][(u8)abs_y]+=dat;
 
 }
+#else
+void OLED_DrawPoint(int16_t x,int16_t y)	//画点 ,点亮该点，x:0~127 , y:0~63.
+{
+	if(x>127 || y>63 || x<0 || y<0)	//限制点的范围	
+		return;
+	oled_RAM[x][y/8] |=  1<<y%8;			//点亮
+}
+
+void OLED_ClosePoint(int16_t x,int16_t y)	//画点 ,熄灭该点，x:0~127 , y:0~63
+{
+	if(x>127 || y>63 || x<0 || y<0)	//限制点的范围	
+		return;
+	oled_RAM[x][y/8] &= ~(1<<y%8);		//熄灭
+}
+#endif
 
 
 //画圆
@@ -416,7 +431,10 @@ void OLED_ShowString(unsigned char x,unsigned char y,unsigned char *chr)
 	while (chr[j]!='\0') //如果不是最后一个字符
 	{		
 		OLED_ShowChar(x,y,chr[j]); //显示字符
-		x+=8; //列数加8 ，一个字符的列数占8
+		if(SIZE == 16)
+			x+=8; //列数加8 ，一个字符的列数占8
+		else
+			x+=6;
 		if(x>=128){x=0;y+=2;} //如果x大于等于128，切换页，从该页的第一列显示
 		j++; //下一个字符
 	}
@@ -563,3 +581,12 @@ void OLED_Scroll(void)
 	OLED_WR_Byte(0x2F,OLED_CMD);	//开启滚动
 }
 
+void OLED_Printf(u8 x , u8 y , char *p,... )	//OLED 格式化输出
+{
+	char buf[32];
+	va_list ap;
+	va_start(ap,p);
+	vsprintf(buf,p,ap);
+	va_end(ap);
+	OLED_ShowString(x,y,(unsigned char *)buf);
+}
