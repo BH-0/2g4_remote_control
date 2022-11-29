@@ -590,3 +590,45 @@ void OLED_Printf(u8 x , u8 y , char *p,... )	//OLED 格式化输出
 	va_end(ap);
 	OLED_ShowString(x,y,(unsigned char *)buf);
 }
+
+
+//显示小车所有信息
+void OLED_main(char *Data)
+{   
+    float pitch=0,yaw=0;
+	float Kp=0,Kd=0;	//平衡环
+	int Kp_speed = 0;	//速度环
+	float Tp=0,Td=0;	//平衡环
+    pitch = (float)((Data[1]<<8)|Data[2])/32768*180;
+    yaw = (float)((Data[3]<<8)|Data[4])/32768*180;
+    //yaw = (float)((Data[5]<<8)|Data[6])/32768*180;
+    OLED_Printf(0,0,"p%6.2f y%6.2f",pitch,yaw);	//俯仰 偏航
+    
+	Kp = (float)Data[5]/100;
+	Kd = (float)Data[6]/1000;
+	Kp_speed = Data[7];
+	OLED_Printf(0,1,"Kp%4.2f Kd%5.3f Sp%3d",Kp,Kd,Kp_speed);	//倾斜PD 速度P
+
+	Tp = (float)Data[8]/-100;
+	Td = (float)Data[9]/-100;
+	OLED_Printf(0,2,"Tp%6.2f Td%6.2f ",Tp,Td);	//转向PD
+
+	if(Data[13] == 0)
+		OLED_Printf(0,6,"Mode:default  ");	//默认模式
+	else if(Data[13] == 1)
+		OLED_Printf(0,6,"Mode:obstacle ");	//避障模式
+	else if(Data[13] == 2)
+		OLED_Printf(0,6,"Mode:follow   ");	//跟随模式
+    if(Data[0] == 0)
+    {
+        OLED_ShowString(100,0,"OFF"); 
+    }else
+    {
+        OLED_ShowString(100,0,"ON "); 
+    }
+
+
+}
+
+
+

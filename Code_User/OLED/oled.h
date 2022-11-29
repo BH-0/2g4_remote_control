@@ -70,6 +70,9 @@ void OLED_Printf(u8 x , u8 y , char *p,... );	//OLED 格式化输出
 //画涟漪
 void DrawEcho(void);
 
+//显示小车所有信息
+void OLED_main(char *Data);
+
 #endif  
 	 
 

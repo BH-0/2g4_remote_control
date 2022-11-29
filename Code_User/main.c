@@ -162,6 +162,7 @@ int main(void)
 				printf("%d:收到数据\r\n",sum);
 				sum = 0;
 				LED_Green =!LED_Green;  //接收
+                OLED_main((char *)RF2G4_Receive_Data);
 			}
 		}
 
